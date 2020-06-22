@@ -1,0 +1,27 @@
+{
+	"name": "eleventy-plugin-embed-svelte",
+	"version": "0.1.2",
+	"description": "An Eleventy plugin that makes embedding Svelte components in your static pages painfully easy.",
+	"author": "Shalom Steinbach",
+	"license": "MIT",
+	"main": ".eleventy.js",
+	"dependencies": {
+		"@rollup/plugin-node-resolve": "^8.1.0",
+		"@rollup/plugin-virtual": "^2.0.3",
+		"cheerio": "^1.0.0-rc.3",
+		"rollup-plugin-svelte": "^5.2.3"
+	},
+	"peerDependencies": {
+		"rollup": "*",
+		"svelte": "*"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/shalomscott/eleventy-plugin-embed-svelte.git"
+	},
+	"keywords": [
+		"eleventy",
+		"eleventy-plugin",
+		"svelte"
+	]
+}
