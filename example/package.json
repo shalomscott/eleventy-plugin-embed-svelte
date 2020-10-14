@@ -1,0 +1,11 @@
+{
+	"name": "example",
+	"version": "1.0.0",
+	"scripts": {
+		"start": "NODE_ENV=development eleventy --serve"
+	},
+	"devDependencies": {
+		"@11ty/eleventy": "^0.11.0",
+		"rollup-plugin-terser": "^7.0.2"
+	}
+}

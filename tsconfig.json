@@ -1,0 +1,16 @@
+{
+	"compilerOptions": {
+		"strict": true,
+		"noImplicitThis": false,
+		"lib": ["ESNext"],
+		"target": "ES6",
+		"removeComments": true,
+		"moduleResolution": "Node",
+		"module": "CommonJS",
+		"declaration": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"outDir": "dist/"
+	},
+	"files": [".eleventy.ts"]
+}
