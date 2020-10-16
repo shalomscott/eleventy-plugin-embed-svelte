@@ -22,7 +22,7 @@ export default function (
 		outputPlugins = []
 	}: { svelteDir: string; inputPlugins: Plugin[]; outputPlugins: Plugin[] }
 ) {
-	const componentMap: ComponentMap = {};
+	let componentMap: ComponentMap = {};
 
 	eleventyConfig.addShortcode('embedSvelte', function (
 		inputPath: string,
@@ -94,6 +94,7 @@ export default function (
 	});
 
 	eleventyConfig.addWatchTarget(svelteDir);
+	eleventyConfig.on('beforeWatch', () => (componentMap = {}));
 }
 
 function virtualEntry(componentsArray: Component[]) {

@@ -9,6 +9,7 @@
 		border: 1px solid crimson;
 		width: fit-content;
 		box-shadow: 0 8px 6px -6px crimson;
+		border-radius: 5px;
 	}
 </style>
 

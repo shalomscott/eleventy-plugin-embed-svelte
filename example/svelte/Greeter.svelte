@@ -7,9 +7,10 @@
 	div {
 		padding: 1em;
 		margin-bottom: 1em;
-		border: 1px solid black;
+		border: 1px solid darkcyan;
 		width: fit-content;
-		box-shadow: 0 8px 6px -6px black;
+		box-shadow: 0 8px 6px -6px darkcyan;
+		border-radius: 5px;
 	}
 </style>
 
