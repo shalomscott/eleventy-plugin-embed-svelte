@@ -1,4 +1,6 @@
-# Installation
+# 🎉 Embed Svelte Components in Your 11ty Site! 🎉
+
+## Installation
 
 [Install the plugin](https://www.11ty.dev/docs/plugins/#adding-a-plugin) through npm:
 
@@ -6,35 +8,34 @@
 npm install eleventy-plugin-embed-svelte
 ```
 
-Then add it to your [Eleventy config](https://www.11ty.dev/docs/config/) file:
+Then add it to your [Eleventy config](https://www.11ty.dev/docs/config/) file, like this:
 
 ```javascript
-const embedSvelte = require('eleventy-plugin-embed-svelte');
-const { terser } = require('rollup-plugin-terser'); // Optional custom plugin for rollup
-
 module.exports = function (eleventyConfig) {
     eleventyConfig.addPlugin(embedSvelte, {
-        // This is the directory that contains your *.svelte component files
+        // Directory that hosts your *.svelte component file (Optional)
         svelteDir: './svelte',
-        // an optional array of input plugins
-        inputPlugins: [],
-        // an optional array of output plugins
-        outputPlugins: [terser()]
+        // Options that you may pass to rollup-plugin-svelte. (Optional)
+        rollupPluginSvelteOptions: { preprocess: sveltePreprocess() },
+        // Array of Rollup input plugins. (Optional)
+        rollupInputPlugins: [],
+        // Array of Rollup output plugins. (Optional)
+        rollupOutputPlugins: [terser()]
     });
 
     // Rest of config file...
 };
 ```
 
-# Usage
+## Usage
 
-To embed Svelte components, drop in `svelte` tags.
+To embed Svelte components, all you need to do is use the shortcode `embedSvelte`.
 
-## example
+### Example
 
-### Greeter.svelte
+- `Greeter.svelte`
 
-```html
+```svelte
 <script>
     export let user;
 </script>
@@ -42,28 +43,18 @@ To embed Svelte components, drop in `svelte` tags.
 <h1>Hello there {user}!</h1>
 ```
 
-### index.html
+- `index.md`
 
-```html
-<p>Here is a custom tailored Svelte component, embedded right into this doc!</p>
+```nunjucks
+Here is our Greeter Svelte component, embedded right into this doc!
 
-<svelte
-    name="Greeter"
-    user="Zach Harris"
-></svelte>
-
-<p>Ain't that nice?</p>
+{% embedSvelte 'Greeter.svelte', { user: 'Zach Harris' } %}
 ```
 
-## explanation
+**_It's as simple as that!_**
 
-This plugin's main feature is an [Eleventy Transform](https://www.11ty.dev/docs/config/#transforms) that scans all output HTML for `svelte` tags. For each tag, the plugin looks for the `name` attribute in order to compile the file `${svelteDir}/${name}.svelte`. All other attributes on the `svelte` tag are interpreted as `props` of the component. The output HTML is then modified to contain, inline, all the bundled code, and code to instantiate the Svelte components.
+## Features
 
-# Features
-
-- An [Eleventy Transform](https://www.11ty.dev/docs/config/#transforms) that scans all files built by Eleventy for `svelte` tags, and builds + embeds the corresponding Svelte component files. (Any file type that is built to HTML can use this - e.g. Markdown)
-- Adds the `svelteDir` (Svelte component directory) to Eleventy's list of [watch targets](https://www.11ty.dev/docs/config/#add-your-own-watch-targets).
-
-# Side Note
-
-This plugin is something I threw together in a couple of hours to use in a project of mine. As such, it is shamefully incomplete. All contributions welcome 😃!
+- A simple shortcode (`{% embedSvelte ... %}`) that allows you to easily embed any Svelte component and pass in `props`.
+- An [Eleventy Transform](https://www.11ty.dev/docs/config/#transforms) that works behind the scenes. Performs a Rollup build for each page with embedded Svelte components and efficiently adds the code to the output HTML.
+- Adds the `svelteDir` (see plugin's options above) to Eleventy's list of [watch targets](https://www.11ty.dev/docs/config/#add-your-own-watch-targets).
