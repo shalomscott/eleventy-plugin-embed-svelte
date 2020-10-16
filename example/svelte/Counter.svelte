@@ -1,5 +1,5 @@
-<script>
-	let count = 0;
+<script lang="ts">
+	let count: number = 0; // <- TypeScript!
 </script>
 
 <style>

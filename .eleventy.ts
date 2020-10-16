@@ -2,7 +2,7 @@
 
 import path from 'path';
 import { Plugin, rollup } from 'rollup';
-import svelte from 'rollup-plugin-svelte';
+import svelte, { Options as SvelteOptions } from 'rollup-plugin-svelte';
 import resolve from '@rollup/plugin-node-resolve';
 import virtual from '@rollup/plugin-virtual';
 import cheerio from 'cheerio';
@@ -13,14 +13,21 @@ type Component = {
 	instances: { props: unknown }[];
 };
 type ComponentMap = { [outputPath: string]: Component[] };
+type Options = {
+	svelteDir?: string;
+	rollupPluginSvelteOptions?: SvelteOptions;
+	rollupInputPlugins?: Plugin[];
+	rollupOutputPlugins?: Plugin[];
+};
 
 export default function (
 	eleventyConfig: any,
 	{
 		svelteDir = '',
-		inputPlugins = [],
-		outputPlugins = []
-	}: { svelteDir: string; inputPlugins: Plugin[]; outputPlugins: Plugin[] }
+		rollupPluginSvelteOptions = {},
+		rollupInputPlugins = [],
+		rollupOutputPlugins = []
+	}: Options
 ) {
 	let componentMap: ComponentMap = {};
 
@@ -68,15 +75,15 @@ export default function (
 				plugins: [
 					virtual({ entry: virtualEntry(componentMap[outputPath]) }) as Plugin,
 					resolve(),
-					svelte({}),
-					...inputPlugins
+					svelte(rollupPluginSvelteOptions),
+					...rollupInputPlugins
 				]
 			});
 
 			const build = await bundle.generate({
 				format: 'iife',
 				name: 'EmbedSvelte',
-				plugins: outputPlugins
+				plugins: rollupOutputPlugins
 			});
 
 			// Assuming no 'assets' are generated

@@ -1,14 +1,17 @@
 const embedSvelte = require('../').default;
-const { terser } = require('rollup-plugin-terser'); // Optional custom plugin for rollup
+const sveltePreprocess = require('svelte-preprocess'); // Optional
+const { terser } = require('rollup-plugin-terser'); // Optional
 
 module.exports = function (eleventyConfig) {
 	eleventyConfig.addPlugin(embedSvelte, {
-		// This is the directory that contains your *.svelte component files
+		// Directory that hosts your *.svelte component files. (Optional)
 		svelteDir: './svelte',
-		// an optional array of input plugins
-		inputPlugins: [],
-		// an optional array of output plugins
-		outputPlugins: [terser()]
+		// Options that you may pass to rollup-plugin-svelte. (Optional)
+		rollupPluginSvelteOptions: { preprocess: sveltePreprocess() },
+		// Array of Rollup input plugins. (Optional)
+		rollupInputPlugins: [],
+		// Array of Rollup output plugins. (Optional)
+		rollupOutputPlugins: [terser()]
 	});
 
 	return {
