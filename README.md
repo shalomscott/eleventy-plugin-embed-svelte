@@ -58,3 +58,6 @@ Here is our Greeter Svelte component, embedded right into this doc!
 - A simple shortcode (`{% embedSvelte ... %}`) that allows you to easily embed any Svelte component and pass in `props`.
 - An [Eleventy Transform](https://www.11ty.dev/docs/config/#transforms) that works behind the scenes. Performs a Rollup build for each page with embedded Svelte components and efficiently adds the code to the output HTML.
 - Adds the `svelteDir` (see plugin's options above) to Eleventy's list of [watch targets](https://www.11ty.dev/docs/config/#add-your-own-watch-targets).
+
+## Example Usage
+**See the ./example directory for a complete example usage of this plugin!**
