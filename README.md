@@ -11,11 +11,14 @@ npm install eleventy-plugin-embed-svelte
 Then add it to your [Eleventy config](https://www.11ty.dev/docs/config/) file, like this:
 
 ```javascript
+// For now, must require with ".default"
+const embedSvelte = require('eleventy-plugin-embed-svelte').default;
+
 module.exports = function (eleventyConfig) {
     eleventyConfig.addPlugin(embedSvelte, {
-        // Directory that hosts your *.svelte component file (Optional)
+        // Directory that hosts your *.svelte component files (Optional)
         svelteDir: './svelte',
-        // Options that you may pass to rollup-plugin-svelte. (Optional)
+        // Pass options to rollup-plugin-svelte. (Optional)
         rollupPluginSvelteOptions: { preprocess: sveltePreprocess() },
         // Array of Rollup input plugins. (Optional)
         rollupInputPlugins: [],
@@ -60,4 +63,4 @@ Here is our Greeter Svelte component, embedded right into this doc!
 - Adds the `svelteDir` (see plugin's options above) to Eleventy's list of [watch targets](https://www.11ty.dev/docs/config/#add-your-own-watch-targets).
 
 ## Example Usage
-**See the ./example directory for a complete example usage of this plugin!**
+**See the `example` directory for a complete example usage of this plugin!**
