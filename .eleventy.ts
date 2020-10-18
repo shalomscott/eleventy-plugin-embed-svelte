@@ -87,12 +87,13 @@ export default function (
 			});
 
 			// Assuming no 'assets' are generated
-			const code = build.output[0].code;
+			let code = build.output[0].code;
+			// Covers edge case (see https://stackoverflow.com/q/36607932/4998195)
+			code = code.replace('</script>', '<\\/script>');
 
-			$('head').append(`<script>${code}</script>`);
-			$('body').append(
-				`<script>${initCode(componentMap[outputPath])}</script>`
-			);
+			const body = $('body');
+			body.append(`<script>${code}</script>`);
+			body.append(`<script>${initCode(componentMap[outputPath])}</script>`);
 
 			return $.html();
 		}
