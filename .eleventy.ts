@@ -15,7 +15,7 @@ type Component = {
 type ComponentMap = { [outputPath: string]: Component[] };
 type Options = {
 	svelteDir?: string;
-	rollupPluginSvelteOptions?: SvelteOptions;
+	rollupPluginSvelteOptions?: Partial<SvelteOptions>;
 	rollupInputPlugins?: Plugin[];
 	rollupOutputPlugins?: Plugin[];
 };
@@ -31,75 +31,77 @@ export default function (
 ) {
 	let componentMap: ComponentMap = {};
 
-	eleventyConfig.addShortcode('embedSvelte', function (
-		inputPath: string,
-		props: unknown
-	) {
-		let index;
-		let instanceIndex;
-		inputPath = path.resolve(svelteDir, inputPath);
-		if (!componentMap[this.page.outputPath]) {
-			index = 0;
-			instanceIndex = 0;
-			componentMap[this.page.outputPath] = [
-				{ index, inputPath, instances: [{ props }] }
-			];
-		} else {
-			const components = componentMap[this.page.outputPath];
-			index = components.findIndex(({ inputPath: ip }) => ip === inputPath);
-			if (index > -1) {
-				instanceIndex = components[index].instances.length;
-				components[index].instances.push({ props });
-			} else {
-				index = components.length;
+	eleventyConfig.addShortcode(
+		'embedSvelte',
+		function (inputPath: string, props: unknown) {
+			let index;
+			let instanceIndex;
+			inputPath = path.resolve(svelteDir, inputPath);
+			if (!componentMap[this.page.outputPath]) {
+				index = 0;
 				instanceIndex = 0;
-				components.push({
-					index,
-					inputPath,
-					instances: [{ props }]
-				});
+				componentMap[this.page.outputPath] = [
+					{ index, inputPath, instances: [{ props }] }
+				];
+			} else {
+				const components = componentMap[this.page.outputPath];
+				index = components.findIndex(({ inputPath: ip }) => ip === inputPath);
+				if (index > -1) {
+					instanceIndex = components[index].instances.length;
+					components[index].instances.push({ props });
+				} else {
+					index = components.length;
+					instanceIndex = 0;
+					components.push({
+						index,
+						inputPath,
+						instances: [{ props }]
+					});
+				}
 			}
+			return `<div id="svelte-embed-${index}${instanceIndex}"></div>`;
 		}
-		return `<div id="svelte-embed-${index}${instanceIndex}"></div>`;
-	});
+	);
 
-	eleventyConfig.addTransform('embed-svelte', async function (
-		content: string,
-		outputPath: string
-	) {
-		if (componentMap[outputPath]) {
-			const $ = cheerio.load(content);
+	eleventyConfig.addTransform(
+		'embed-svelte',
+		async function (content: string, outputPath: string) {
+			if (componentMap[outputPath]) {
+				const $ = cheerio.load(content);
 
-			const bundle = await rollup({
-				input: 'entry',
-				plugins: [
-					virtual({ entry: virtualEntry(componentMap[outputPath]) }) as Plugin,
-					resolve(),
-					svelte(rollupPluginSvelteOptions),
-					...rollupInputPlugins
-				]
-			});
+				const bundle = await rollup({
+					input: 'entry',
+					plugins: [
+						virtual({
+							entry: virtualEntry(componentMap[outputPath])
+						}) as Plugin,
+						resolve(),
+						svelte(rollupPluginSvelteOptions),
+						...rollupInputPlugins
+					]
+				});
 
-			const build = await bundle.generate({
-				format: 'iife',
-				name: 'EmbedSvelte',
-				plugins: rollupOutputPlugins
-			});
+				const build = await bundle.generate({
+					format: 'iife',
+					name: 'EmbedSvelte',
+					plugins: rollupOutputPlugins
+				});
 
-			// Assuming no 'assets' are generated
-			let code = build.output[0].code;
-			// Covers edge case (see https://stackoverflow.com/q/36607932/4998195)
-			code = code.replace('</script>', '<\\/script>');
+				// Assuming no 'assets' are generated
+				let code = build.output[0].code;
+				// Covers edge case (see https://stackoverflow.com/q/36607932/4998195)
+				code = code.replace('</script>', '<\\/script>');
 
-			const body = $('body');
-			body.append(`<script>${code}</script>`);
-			body.append(`<script>${initCode(componentMap[outputPath])}</script>`);
+				const body = $('body');
+				body.append(`<script>${code}</script>`);
+				body.append(`<script>${initCode(componentMap[outputPath])}</script>`);
 
-			return $.html();
+				return $.html();
+			}
+
+			return content;
 		}
-
-		return content;
-	});
+	);
 
 	eleventyConfig.addWatchTarget(svelteDir);
 	eleventyConfig.on('beforeWatch', () => (componentMap = {}));

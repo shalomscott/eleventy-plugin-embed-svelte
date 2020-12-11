@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"strict": true,
 		"noImplicitThis": false,
-		"lib": ["ESNext"],
+		"lib": ["ESNext", "DOM"],
 		"target": "ES6",
 		"removeComments": true,
 		"moduleResolution": "Node",
