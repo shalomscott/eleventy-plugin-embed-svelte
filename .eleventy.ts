@@ -76,7 +76,10 @@ export default function (
 							entry: virtualEntry(componentMap[outputPath])
 						}) as Plugin,
 						resolve(),
-						svelte(rollupPluginSvelteOptions),
+						svelte({
+							emitCss: false,
+							...rollupPluginSvelteOptions
+						}),
 						...rollupInputPlugins
 					]
 				});
