@@ -1,4 +1,12 @@
-# 🎉 Embed Svelte Components in Your 11ty Site! 🎉
+# Eleventy Plugin Embed Svelte
+
+> 🎉 Embed Svelte Components in Your 11ty Site! 🎉
+
+## Example Usage
+
+See the `example` directory for a complete example usage of this plugin.
+
+**Check out the example live [here](https://shalomscott.github.io/eleventy-plugin-embed-svelte/) 👈**
 
 ## Installation
 
@@ -36,7 +44,7 @@ To embed Svelte components, all you need to do is use the shortcode `embedSvelte
 
 ### Example
 
-- `Greeter.svelte`
+#### `Greeter.svelte`
 
 ```svelte
 <script>
@@ -46,7 +54,7 @@ To embed Svelte components, all you need to do is use the shortcode `embedSvelte
 <h1>Hello there {user}!</h1>
 ```
 
-- `index.md`
+#### `index.md`
 
 ```nunjucks
 Here is our Greeter Svelte component, embedded right into this doc!
@@ -58,9 +66,6 @@ Here is our Greeter Svelte component, embedded right into this doc!
 
 ## Features
 
-- A simple shortcode (`{% embedSvelte ... %}`) that allows you to easily embed any Svelte component and pass in `props`.
-- An [Eleventy Transform](https://www.11ty.dev/docs/config/#transforms) that works behind the scenes. Performs a Rollup build for each page with embedded Svelte components and efficiently adds the code to the output HTML.
+- A simple shortcode: `{% embedSvelte ... %}`, that allows you to easily embed any Svelte component and pass in `props`.
+- An [Eleventy Transform](https://www.11ty.dev/docs/config/#transforms) that works behind the scenes to perform a Rollup build for each page with embedded Svelte components, and efficiently add the code to the output HTML.
 - Adds the `svelteDir` (see plugin's options above) to Eleventy's list of [watch targets](https://www.11ty.dev/docs/config/#add-your-own-watch-targets).
-
-## Example Usage
-**See the `example` directory for a complete example usage of this plugin!**
