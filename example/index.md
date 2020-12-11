@@ -4,15 +4,15 @@ layout: main
 
 # Embedded Component Examples
 
-### Here's an embedded component (`Greeter.svelte`):
+### Here's an embedded component (`Greeter.svelte`)
 
 {% embedSvelte 'Greeter.svelte', { name: 'Zach' } %}
 
-### And here's that same component embeded once again, but with different `props`:
+### And here's that same component embeded once again, but with different `props`
 
 {% embedSvelte 'Greeter.svelte', { name: 'Rich' } %}
 
-### Lastly, a second embedded component:
+### Lastly, a second embedded component
 
 {% embedSvelte 'Counter.svelte' %}
 
