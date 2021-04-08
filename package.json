@@ -1,6 +1,6 @@
 {
 	"name": "eleventy-plugin-embed-svelte",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"description": "An Eleventy plugin that makes embedding Svelte components in your static pages painfully easy.",
 	"author": "Shalom Steinbach",
 	"license": "MIT",
