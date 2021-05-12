@@ -11,7 +11,9 @@ module.exports = function (eleventyConfig) {
 		// Array of Rollup input plugins. (Optional)
 		rollupInputPlugins: [],
 		// Array of Rollup output plugins. (Optional)
-		rollupOutputPlugins: [terser()]
+		rollupOutputPlugins: [terser()],
+		// Options that you may pass to @rollup/plugin-node-resolve. (Optional)
+		rollupResolveOptions: {}
 	});
 
 	return {
