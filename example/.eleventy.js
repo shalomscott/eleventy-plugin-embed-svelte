@@ -1,4 +1,4 @@
-const embedSvelte = require('../').default;
+const embedSvelte = require('../');
 const sveltePreprocess = require('svelte-preprocess'); // Optional
 const { terser } = require('rollup-plugin-terser'); // Optional
 

@@ -19,8 +19,7 @@ npm install eleventy-plugin-embed-svelte
 Then add it to your [Eleventy config](https://www.11ty.dev/docs/config/) file, like this:
 
 ```javascript
-// For now, must require with ".default"
-const embedSvelte = require('eleventy-plugin-embed-svelte').default;
+const embedSvelte = require('eleventy-plugin-embed-svelte');
 
 module.exports = function (eleventyConfig) {
     eleventyConfig.addPlugin(embedSvelte, {

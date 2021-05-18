@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"strict": true,
 		"noImplicitThis": false,
-		"lib": ["ESNext", "DOM"],
+		"lib": ["ESNext"],
 		"target": "ES6",
 		"removeComments": true,
 		"moduleResolution": "Node",
@@ -10,6 +10,7 @@
 		"declaration": true,
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
+		"skipLibCheck": true,
 		"outDir": "dist/"
 	},
 	"files": [".eleventy.ts"]

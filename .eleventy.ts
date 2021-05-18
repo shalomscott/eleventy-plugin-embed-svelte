@@ -20,7 +20,7 @@ type Options = {
 	rollupOutputPlugins?: Plugin[];
 };
 
-export default function (
+export = function (
 	eleventyConfig: any,
 	{
 		svelteDir = '',
@@ -108,7 +108,7 @@ export default function (
 
 	eleventyConfig.addWatchTarget(svelteDir);
 	eleventyConfig.on('beforeWatch', () => (componentMap = {}));
-}
+};
 
 function virtualEntry(componentsArray: Component[]) {
 	return componentsArray
