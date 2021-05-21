@@ -6,13 +6,13 @@ import svelte, { Options as SvelteOptions } from 'rollup-plugin-svelte';
 import resolve from '@rollup/plugin-node-resolve';
 import virtual from '@rollup/plugin-virtual';
 import cheerio from 'cheerio';
+import { getBaseName } from './utils/paths';
 
 type Component = {
-	index: number;
-	inputPath: string;
+	fileName: string;
 	instances: { props: unknown }[];
 };
-type ComponentMap = { [outputPath: string]: Component[] };
+type ComponentMap = { [outputPath: string]: Record<string, Component> };
 type Options = {
 	svelteDir?: string;
 	rollupPluginSvelteOptions?: Partial<SvelteOptions>;
@@ -33,33 +33,29 @@ export = function (
 
 	eleventyConfig.addShortcode(
 		'embedSvelte',
-		function (inputPath: string, props: unknown) {
-			let index;
-			let instanceIndex;
-			inputPath = path.resolve(svelteDir, inputPath);
+		function (fileName: string, props: unknown) {
+			fileName = path.resolve(svelteDir, fileName);
+			let name = getBaseName(fileName);
+			let instanceIndex: number;
 			if (!componentMap[this.page.outputPath]) {
-				index = 0;
 				instanceIndex = 0;
-				componentMap[this.page.outputPath] = [
-					{ index, inputPath, instances: [{ props }] }
-				];
+				componentMap[this.page.outputPath] = {
+					[name]: { fileName, instances: [{ props }] }
+				};
 			} else {
 				const components = componentMap[this.page.outputPath];
-				index = components.findIndex(({ inputPath: ip }) => ip === inputPath);
-				if (index > -1) {
-					instanceIndex = components[index].instances.length;
-					components[index].instances.push({ props });
+				if (components[name]) {
+					instanceIndex = components[name].instances.length;
+					components[name].instances.push({ props });
 				} else {
-					index = components.length;
 					instanceIndex = 0;
-					components.push({
-						index,
-						inputPath,
+					components[name] = {
+						fileName,
 						instances: [{ props }]
-					});
+					};
 				}
 			}
-			return `<div id="svelte-embed-${index}${instanceIndex}"></div>`;
+			return `<div id="svelte-embed-${name}${instanceIndex}"></div>`;
 		}
 	);
 
@@ -77,8 +73,8 @@ export = function (
 						}) as Plugin,
 						resolve(),
 						svelte({
-							emitCss: false,
-							...rollupPluginSvelteOptions
+							...rollupPluginSvelteOptions,
+							emitCss: false
 						}),
 						...rollupInputPlugins
 					]
@@ -90,14 +86,18 @@ export = function (
 					plugins: rollupOutputPlugins
 				});
 
+				await bundle.close();
+
 				// Assuming no 'assets' are generated
 				let code = build.output[0].code;
 				// Covers edge case (see https://stackoverflow.com/q/36607932/4998195)
 				code = code.replace('</script>', '<\\/script>');
 
 				const body = $('body');
-				body.append(`<script>${code}</script>`);
-				body.append(`<script>${initCode(componentMap[outputPath])}</script>`);
+				body.append(`\n<script>\n${code}</script>`);
+				body.append(
+					`\n<script>\n${initCode(componentMap[outputPath])}\n</script>\n`
+				);
 
 				return $.html();
 			}
@@ -110,24 +110,24 @@ export = function (
 	eleventyConfig.on('beforeWatch', () => (componentMap = {}));
 };
 
-function virtualEntry(componentsArray: Component[]) {
-	return componentsArray
+function virtualEntry(components: Record<string, Component>) {
+	return Object.entries(components)
 		.map(
-			({ index, inputPath }) =>
-				`export { default as Component${index} } from '${inputPath}';`
+			([name, { fileName }]) =>
+				`export { default as ${name} } from '${fileName}';`
 		)
 		.join('');
 }
 
-function initCode(componentsArray: Component[]) {
-	return componentsArray
-		.flatMap(({ index, instances }) =>
+function initCode(components: Record<string, Component>) {
+	return Object.entries(components)
+		.flatMap(([name, { instances }]) =>
 			instances.map(
 				({ props }, instanceIndex) =>
-					`new EmbedSvelte.Component${index}({ target: document.getElementById('svelte-embed-${index}${instanceIndex}'), props: ${JSON.stringify(
+					`new EmbedSvelte.${name}({\n\ttarget: document.getElementById('svelte-embed-${name}${instanceIndex}'),\n\tprops: ${JSON.stringify(
 						props
-					)} });`
+					)}\n});`
 			)
 		)
-		.join('');
+		.join('\n');
 }
