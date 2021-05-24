@@ -1,11 +1,12 @@
 'use strict';
 
-import path from 'path';
-import { Plugin, rollup } from 'rollup';
-import svelte, { Options as SvelteOptions } from 'rollup-plugin-svelte';
 import resolve from '@rollup/plugin-node-resolve';
 import virtual from '@rollup/plugin-virtual';
 import cheerio from 'cheerio';
+import path from 'path';
+import { Plugin, rollup } from 'rollup';
+import svelte, { Options as SvelteOptions } from 'rollup-plugin-svelte';
+import { getRollupOptions } from './utils/config';
 import { getBaseName } from './utils/paths';
 
 type Component = {
@@ -16,18 +17,11 @@ type ComponentMap = { [outputPath: string]: Record<string, Component> };
 type Options = {
 	svelteDir?: string;
 	rollupPluginSvelteOptions?: Partial<SvelteOptions>;
-	rollupInputPlugins?: Plugin[];
-	rollupOutputPlugins?: Plugin[];
 };
 
 export = function (
 	eleventyConfig: any,
-	{
-		svelteDir = '',
-		rollupPluginSvelteOptions = {},
-		rollupInputPlugins = [],
-		rollupOutputPlugins = []
-	}: Options
+	{ svelteDir = '', rollupPluginSvelteOptions = {} }: Options
 ) {
 	let componentMap: ComponentMap = {};
 
@@ -65,25 +59,31 @@ export = function (
 			if (componentMap[outputPath]) {
 				const $ = cheerio.load(content);
 
+				const optionsGetter = await getRollupOptions('embedSvelte');
+				const inputOptions = optionsGetter.inputOptions({
+					plugins: [resolve()]
+				});
+				const outputOptions = optionsGetter.outputOptions();
+
 				const bundle = await rollup({
+					...inputOptions,
 					input: 'entry',
 					plugins: [
+						...(inputOptions.plugins ?? []),
 						virtual({
 							entry: virtualEntry(componentMap[outputPath])
 						}) as Plugin,
-						resolve(),
 						svelte({
 							...rollupPluginSvelteOptions,
 							emitCss: false
-						}),
-						...rollupInputPlugins
+						})
 					]
 				});
 
 				const build = await bundle.generate({
+					...outputOptions,
 					format: 'iife',
-					name: 'EmbedSvelte',
-					plugins: rollupOutputPlugins
+					name: 'EmbedSvelte'
 				});
 
 				await bundle.close();
