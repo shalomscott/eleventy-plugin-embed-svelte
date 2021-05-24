@@ -3,7 +3,7 @@
 import path from 'path';
 import { Plugin, rollup } from 'rollup';
 import svelte, { Options as SvelteOptions } from 'rollup-plugin-svelte';
-import resolve from '@rollup/plugin-node-resolve';
+import resolve, { RollupNodeResolveOptions } from '@rollup/plugin-node-resolve';
 import virtual from '@rollup/plugin-virtual';
 import cheerio from 'cheerio';
 import { getBaseName } from './utils/paths';
@@ -18,6 +18,7 @@ type Options = {
 	rollupPluginSvelteOptions?: Partial<SvelteOptions>;
 	rollupInputPlugins?: Plugin[];
 	rollupOutputPlugins?: Plugin[];
+	rollupResolveOptions?: Partial<RollupNodeResolveOptions>;
 };
 
 export = function (
@@ -26,7 +27,8 @@ export = function (
 		svelteDir = '',
 		rollupPluginSvelteOptions = {},
 		rollupInputPlugins = [],
-		rollupOutputPlugins = []
+		rollupOutputPlugins = [],
+		rollupResolveOptions = {}
 	}: Options
 ) {
 	let componentMap: ComponentMap = {};
@@ -71,7 +73,7 @@ export = function (
 						virtual({
 							entry: virtualEntry(componentMap[outputPath])
 						}) as Plugin,
-						resolve(),
+						resolve(rollupResolveOptions),
 						svelte({
 							...rollupPluginSvelteOptions,
 							emitCss: false
