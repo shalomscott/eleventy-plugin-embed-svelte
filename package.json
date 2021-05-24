@@ -23,13 +23,13 @@
 	"main": "dist/.eleventy.js",
 	"types": "dist/.eleventy.d.ts",
 	"dependencies": {
-		"@rollup/plugin-node-resolve": "^13.0.0",
 		"@rollup/plugin-virtual": "^2.0.3",
 		"cheerio": "^1.0.0-rc.9",
-		"rollup": "2.48.0",
 		"rollup-plugin-svelte": "^7.1.0"
 	},
 	"peerDependencies": {
+		"@rollup/plugin-node-resolve": ">=13.0.0",
+		"rollup": ">=2.48.0",
 		"svelte": ">=3.38.0"
 	},
 	"devDependencies": {
